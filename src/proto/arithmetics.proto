@@ -1,0 +1,18 @@
+syntax = "proto3";
+package arithmetics;
+
+service Arithmetics {
+  
+  rpc add (TwoValueRequest) returns (OneValueReply) {}
+}
+
+
+message TwoValueRequest {
+    int32 a = 1;
+    int32 b = 2;
+}
+
+message OneValueReply {
+    int32 c = 1;
+}
+
