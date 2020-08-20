@@ -16,9 +16,12 @@
  *
  */
 
-#include <iostream>
+
 #include <memory>
 #include <string>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
 #include <grpcpp/grpcpp.h>
 
@@ -33,8 +36,24 @@ using arithmetics::Arithmetics;
 
 class ArithmeticClient {
  public:
-  ArithmeticClient(std::shared_ptr<Channel> channel): stub_(Arithmetics::NewStub(channel)) {}
-  
+  ArithmeticClient(const std::string& cert,
+      const std::string& key,
+      const std::string& root,
+      const std::string& server)
+  {
+      grpc::SslCredentialsOptions opts;
+      /*grpc::SslCredentialsOptions opts =
+      {
+          root,
+          key,
+          cert
+      };*/
+      opts.pem_root_certs = root;
+      
+
+      stub_ = Arithmetics::NewStub(grpc::CreateChannel(
+          server, grpc::SslCredentials(opts)));
+  }
   // Assembles the client's payload, sends it and presents the response back
   // from the server.
   std::string Compute(int a, int b){
@@ -66,20 +85,59 @@ class ArithmeticClient {
     std::unique_ptr<Arithmetics::Stub> stub_;
 };
 
-int main(int argc, char** argv) {
-  // Instantiate the client. It requires a channel, out of which the actual RPCs
-  // are created. This channel models a connection to an endpoint specified by
-  // the argument "--target=" which is the only expected argument.
-  // We indicate that the channel isn't authenticated (use of
-  // InsecureChannelCredentials()).
-  std::string target_str;
-  target_str = "localhost:50052";
-  
-  ArithmeticClient client(grpc::CreateChannel(
-      target_str, grpc::InsecureChannelCredentials()));
-  
-  std::string reply = client.Compute(10,20);
-  std::cout << "Sum received: " << reply << std::endl;
+void
+read(const std::string& filename, std::string& data)
+{
+    std::ifstream file(filename.c_str(), std::ios::in);
 
-  return 0;
+    if (file.is_open())
+    {
+        std::stringstream ss;
+        ss << file.rdbuf();
+
+        file.close();
+
+        data = ss.str();
+    }
+
+    return;
 }
+
+int
+main(int argc, char** argv)
+{
+    std::string cert;
+    std::string key;
+    std::string root;
+    std::string server{ "localhost:50052" };
+
+    read("C:\\Users\\prashant\\Desktop\\sslcert\\client.crt", cert);
+    read("C:\\Users\\prashant\\Desktop\\sslcert\\client.key", key);
+    read("C:\\Users\\prashant\\Desktop\\sslcert\\ca.crt", root);
+
+    ArithmeticClient greeter(cert, key, root, server);
+
+     
+    std::string reply = greeter.Compute(10, 20);
+    std::cout << "Sum received: " << reply << std::endl;
+
+    return 0;
+}
+
+//int main(int argc, char** argv) {
+//  // Instantiate the client. It requires a channel, out of which the actual RPCs
+//  // are created. This channel models a connection to an endpoint specified by
+//  // the argument "--target=" which is the only expected argument.
+//  // We indicate that the channel isn't authenticated (use of
+//  // InsecureChannelCredentials()).
+//  std::string target_str;
+//  target_str = "localhost:50052";
+//  
+//  ArithmeticClient client(grpc::CreateChannel(
+//      target_str, grpc::InsecureChannelCredentials()));
+//  
+//  std::string reply = client.Compute(10,20);
+//  std::cout << "Sum received: " << reply << std::endl;
+//
+//  return 0;
+//}
