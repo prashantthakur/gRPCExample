@@ -1,0 +1,49 @@
+mypass="pass123"
+
+    echo Generate server key:
+    openssl genrsa -passout pass:$mypass -des3 -out server.key 4096
+
+    echo Generate server signing request:
+    openssl req -passin pass:$mypass -new -key server.key -out server.csr -subj  "/C=US/ST=CA/L=SanFrancisco/O=Google/OU=youtube/CN=localhost"
+
+    echo Self-sign server certificate:
+    openssl x509 -req -passin pass:$mypass -days 365 -in server.csr -signkey server.key -set_serial 01 -out server.crt
+
+    echo Remove passphrase from server key:
+    openssl rsa -passin pass:$mypass -in server.key -out server.key
+
+    rm server.csr
+
+
+
+ std::string server_address("0.0.0.0:50051");
+    GreeterServiceImpl service;
+
+    std::string servercert = read_keycert("server.crt");
+    std::string serverkey = read_keycert("server.key");
+
+    grpc::SslServerCredentialsOptions::PemKeyCertPair pkcp;
+    pkcp.private_key = serverkey;
+    pkcp.cert_chain = servercert;
+
+    grpc::SslServerCredentialsOptions ssl_opts;
+    ssl_opts.pem_root_certs="";
+    ssl_opts.pem_key_cert_pairs.push_back(pkcp);
+
+    std::shared_ptr<grpc::ServerCredentials> creds;
+    creds = grpc::SslServerCredentials(ssl_opts);
+
+    ServerBuilder builder;
+    builder.AddListeningPort(server_address, creds);
+    builder.RegisterService(&service);
+    std::unique_ptr<Server> server(builder.BuildAndStart());
+    server->Wait();
+	
+	
+	
+	std::string cacert = read_keycert("server.crt");
+    grpc::SslCredentialsOptions ssl_opts;
+    ssl_opts.pem_root_certs=cacert;
+
+    auto ssl_creds = grpc::SslCredentials(ssl_opts);
+    GreeterClient greeter(grpc::CreateChannel("localhost:50051", ssl_creds));
