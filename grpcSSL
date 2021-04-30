@@ -243,3 +243,11 @@ int main(int argc, char** argv) {
   return 0;
 }
 
+
+cmake -DOPENSSL_INCLUDE_DIR=<folder conating folder openssl> -DOPENSSL_SSL_LIBRARY=<file lissl.so> -DOPENSSL_CRYPTO_LIBRARY=<file libcrypto.so>
+
+
+
+export OPENSSL_ROOT_DIR=/usr/local/Cellar/openssl/1.0.2o_2/
+export OPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2o_2/include/
+
