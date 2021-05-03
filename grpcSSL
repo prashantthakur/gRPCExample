@@ -251,3 +251,12 @@ cmake -DOPENSSL_INCLUDE_DIR=<folder conating folder openssl> -DOPENSSL_SSL_LIBRA
 export OPENSSL_ROOT_DIR=/usr/local/Cellar/openssl/1.0.2o_2/
 export OPENSSL_INCLUDE_DIR=/usr/local/Cellar/openssl/1.0.2o_2/include/
 
+
+find_package(OpenSSL REQUIRED) 
+if( OpenSSL_FOUND )
+    include_directories(${OPENSSL_INCLUDE_DIRS})
+    link_directories(${OPENSSL_LIBRARIES})
+    message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
+
+target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
+
