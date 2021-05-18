@@ -38,3 +38,8 @@ For example, for octodmeo.com
 [alt_names]
 DNS.1 = octodemo.com
 DNS.2 = *.o
+
+openssl genrsa -out hostname.key 2048
+openssl rsa -in hostname.key -out hostname-key.pem
+openssl req -new -key hostname-key.pem -out hostname-request.csr
+openssl x509 -req -extensions v3_req -days 365 -in hostname-request.csr -signkey hostname-key.key -out hostname-cert.pem -extfile <path to openssl.conf>
