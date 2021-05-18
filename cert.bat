@@ -17,3 +17,6 @@
 
 @rem Remove passphrase from Client Key
 "C:\Users\prashant\Desktop\zipdir\openssl\Lib\x64\RELEASE\bin\openssl.exe" rsa -passin pass:1234 -in client.key -out client.key
+
+
+https://gist.github.com/bitoiu/9e19962b991a71165268
