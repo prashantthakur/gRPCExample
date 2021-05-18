@@ -20,3 +20,21 @@
 
 
 https://gist.github.com/bitoiu/9e19962b991a71165268
+
+[ v3_req ]
+ 
+# Extensions to add to a certificate request
+ 
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+Add the main hostname and the wildcard to a new [alt_names] section
+
+[alt_names]
+DNS.1 = yourdomain.com
+DNS.2 = *.yourdomain.com
+For example, for octodmeo.com
+
+[alt_names]
+DNS.1 = octodemo.com
+DNS.2 = *.o
