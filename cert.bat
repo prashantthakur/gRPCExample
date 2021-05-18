@@ -1,3 +1,5 @@
+https://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+
 @rem Generate valid CA
 "C:\Users\prashant\Desktop\zipdir\openssl\Lib\x64\RELEASE\bin\openssl.exe" genrsa -passout pass:1234 -des3 -out ca.key 4096
 "C:\Users\prashant\Desktop\zipdir\openssl\Lib\x64\RELEASE\bin\openssl.exe" req -passin pass:1234 -new -x509 -days 365 -key ca.key -out ca.crt -subj  "/C=SP/ST=Spain/L=Valdepenias/O=Test/OU=Test/CN=Root CA"
