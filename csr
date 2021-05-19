@@ -24,3 +24,58 @@ EOF
 
 # Let’s call openssl now by piping the newly created file in
 openssl req -new -sha256 -nodes -out \*.your-new-domain.com.csr -newkey rsa:2048 -keyout \*.your-new-domain.com.key -config <( cat csr_details.txt )
+
+
+
+
+
+[req]
+distinguished_name = req_distinguished_name
+req_extensions     = v3_req
+x509_extensions    = v3_req
+
+[req_distinguished_name]
+commonName       = {{ common_name }}
+emailAddress     = {{ ssl_certs_email }}
+organizationName = {{ ssl_certs_organization }}
+localityName     = {{ ssl_certs_locality }}
+countryName      = {{ ssl_certs_country }}
+
+[v3_req]
+# The extentions to add to a self-signed cert
+subjectKeyIdentifier = hash
+basicConstraints     = critical,CA:false
+subjectAltName       = DNS:{{ common_name }}
+keyUsage             = critical,digitalSignature,keyEncipherment
+Some Variables
+
+These Ansible variables used in the following commands, but you can substitute as needed in your scripts:
+
+ssl_certs_fields: "/C={{ssl_certs_country}}/ST={{ssl_certs_state}}/L={{ssl_certs_locality}}/O={{ssl_certs_organization}}/CN={{common_name}}/emailAddress={{ssl_certs_email}}"
+ssl_certs_local_privkey_path:       The path to the Private Key
+ssl_certs_local_csr_path:           The path to the CSR
+ssl_certs_local_path:               The local dir for this PKI file set
+ssl_certs_local_decrypt_cakey_path: A temporarily decrypted copy of the CA 
+key ssl_certs_local_caserial_path: The CA's serial numbering file ssl_certs_local_cert_path: The final generated certificate file.
+
+The CSR Generation Command
+
+openssl req -new -sha256 -subj "{{ ssl_certs_fields }}" 
+-key "{{ ssl_certs_local_privkey_path }}"
+-out "{{ ssl_certs_local_csr_path }}" 
+-config "{{ssl_certs_local_path}}/san.cnf"
+Self-Signing the CSR to create the Certificate
+
+  openssl x509 -req -days {{ ssl_certs_days }}
+  -sha256
+  -extfile "{{ssl_certs_local_path}}/san.cnf"
+  -extensions v3_req
+  -in "{{ ssl_certs_local_csr_path }}"
+  -CA "{{ ssl_certs_local_ca_path }}"
+  -CAkey "{{ ssl_certs_local_decrypt_cakey_path }}"
+  -CAcreateserial
+  -CAserial "{{ ssl_certs_local_caserial_path }}"
+  -out "{{ ssl_certs_local_cert_path }}"
+To Verify the Result
+
+openssl x509 -noout -text -in {{ ssl_certs_local_cert_path }}
