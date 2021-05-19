@@ -79,3 +79,31 @@ Self-Signing the CSR to create the Certificate
 To Verify the Result
 
 openssl x509 -noout -text -in {{ ssl_certs_local_cert_path }}
+
+
+
+==========================================================================
+
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = US
+ST = VA
+L = SomeCity
+O = MyCompany
+OU = MyDivision
+CN = www.company.com
+[v3_req]
+keyUsage = critical, digitalSignature, keyAgreement
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = www.company.com
+DNS.2 = company.com
+DNS.3 = company.net
+Create the certificate referencing this config file
+
+openssl req -x509 -nodes -days 730 -newkey rsa:2048 \
+ -keyout cert.key -out cert.pem -config req.cnf -sha256
