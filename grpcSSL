@@ -262,3 +262,6 @@ target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
 
 bind 10.0.0.3:443 ssl crt /etc/ssl/certs/mysite.pem ssl-min-ver TLSv1.2
 
+
+
+https://chromium.googlesource.com/external/github.com/grpc/grpc/+/HEAD/examples/cpp/metadata/greeter_server.cc
