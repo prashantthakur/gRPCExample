@@ -20,3 +20,5 @@ char		pg_pszShared[256] = {0};
 #pragma data_seg()
 
 #pragma comment(linker, "/section:.SHARED,RWS")
+
+https://stackoverflow.com/questions/36484594/the-program-crashes-as-soon-i-execute
