@@ -1,0 +1,22 @@
+#pragma data_seg(".SHARED")
+
+int			giShared = 0;
+char		gpszShared[256] = {0};
+
+#pragma data_seg()
+
+#pragma comment(linker, "/section:.SHARED,RWS")
+
+
+
+
+
+
+// shared data
+#pragma data_seg(".SHARED")
+
+char		pg_pszShared[256] = {0};
+
+#pragma data_seg()
+
+#pragma comment(linker, "/section:.SHARED,RWS")
