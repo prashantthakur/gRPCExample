@@ -265,3 +265,5 @@ bind 10.0.0.3:443 ssl crt /etc/ssl/certs/mysite.pem ssl-min-ver TLSv1.2
 
 
 https://chromium.googlesource.com/external/github.com/grpc/grpc/+/HEAD/examples/cpp/metadata/greeter_server.cc
+
+https://docs.microsoft.com/en-us/archive/msdn-magazine/2016/may/the-working-programmer-how-to-be-mean-getting-the-edge-js
